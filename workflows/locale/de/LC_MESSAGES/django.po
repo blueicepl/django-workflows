@@ -1,0 +1,73 @@
+# German translations for django-workflows
+# Copyright (C) 2010 Kai Diefenbach
+# This file is distributed under the same license as the PACKAGE package.
+# Kai Diefenbach <kai.diefenbach@iqpp.de>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-10-28 11:43+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: models.py:38 models.py:156 models.py:228
+msgid "Name"
+msgstr "Name"
+
+#: models.py:39 models.py:157 models.py:229
+msgid "Codename"
+msgstr ""
+
+#: models.py:158 models.py:230 models.py:288 models.py:313
+msgid "Workflow"
+msgstr "Arbeitsablauf"
+
+#: models.py:159
+msgid "Transitions"
+msgstr "Übergänge"
+
+#: models.py:231
+msgid "Destination"
+msgstr "Ziel"
+
+#: models.py:233
+msgid "Condition"
+msgstr "Kondition"
+
+#: models.py:234 models.py:359 models.py:383
+msgid "Permission"
+msgstr "Recht"
+
+#: models.py:255 models.py:284
+msgid "Content type"
+msgstr "Inhaltstyp"
+
+#: models.py:257 models.py:286
+msgid "Content id"
+msgstr "Inhalts-ID"
+
+#: models.py:259 models.py:358 models.py:382
+msgid "State"
+msgstr "Status"
+
+#: models.py:312
+msgid "Content Type"
+msgstr "Inhaltstyp"
+
+#: models.py:384
+msgid "Role"
+msgstr "Rolle"
+
+#: models.py:390
+msgid "State Permission Relation"
+msgstr ""
+
+#: models.py:391
+msgid "States Permissions Relations"
+msgstr ""

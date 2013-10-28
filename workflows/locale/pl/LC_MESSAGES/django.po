@@ -1,0 +1,74 @@
+# Polish translations for django-workflows
+# This file is distributed under the same license as the django-workflows package.
+# Janusz Harkot <janusz.harkot@gmail.com>, 2013.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-10-28 11:43+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Janusz Harkot <janusz.harkot@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: PL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+
+#: models.py:38 models.py:156 models.py:228
+msgid "Name"
+msgstr "Nazwa"
+
+#: models.py:39 models.py:157 models.py:229
+msgid "Codename"
+msgstr "Nazwa kodowa"
+
+#: models.py:158 models.py:230 models.py:288 models.py:313
+msgid "Workflow"
+msgstr "Workflow"
+
+#: models.py:159
+msgid "Transitions"
+msgstr "Przejście"
+
+#: models.py:231
+msgid "Destination"
+msgstr "Cel"
+
+#: models.py:233
+msgid "Condition"
+msgstr "Warunek"
+
+#: models.py:234 models.py:359 models.py:383
+msgid "Permission"
+msgstr "Uprawnienie"
+
+#: models.py:255 models.py:284
+msgid "Content type"
+msgstr "Typ obiektu"
+
+#: models.py:257 models.py:286
+msgid "Content id"
+msgstr "Id obiektu"
+
+#: models.py:259 models.py:358 models.py:382
+msgid "State"
+msgstr "Stan"
+
+#: models.py:312
+msgid "Content Type"
+msgstr "Typ obiektu"
+
+#: models.py:384
+msgid "Role"
+msgstr "Rola"
+
+#: models.py:390
+msgid "State Permission Relation"
+msgstr "Powiązanie stanu i uprawnienia"
+
+#: models.py:391
+msgid "States Permissions Relations"
+msgstr "Powiązania stanów i uprawnień"
