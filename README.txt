@@ -17,6 +17,13 @@ a look at the CMS `LFC <http://pypi.python.org/pypi/django-lfc>`_
 Changes
 =======
 
+
+1.0.3
+------------------
+* update admin
+* add state history option (now depends on django-appconf)
+
+
 1.0.2 (2010-04-30)
 ------------------
 

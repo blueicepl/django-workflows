@@ -257,12 +257,39 @@ class StateObjectRelation(models.Model):
     content_id = models.PositiveIntegerField(_("Content id"), blank=True, null=True)
     content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
     state = models.ForeignKey(State, verbose_name=_("State"))
+    update_date = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return u"%s %s - %s" % (self.content_type.name, self.content_id, self.state.name)
 
     class Meta:
         unique_together = ("content_type", "content_id", "state")
+
+
+class StateObjectHistory(models.Model):
+    """Stores the workflow state history of an object.
+
+    Provides a way to give any object a workflow state history without changing the
+    object's model.
+
+    **Attributes:**
+
+    content
+        The object for which the state is stored. This can be any instance of
+        a Django model.
+
+    state
+        The state of content. This must be a State instance.
+    """
+    content_type = models.ForeignKey(ContentType, verbose_name=_("Content type"), related_name="state_history",
+                                     blank=True, null=True)
+    content_id = models.PositiveIntegerField(_("Content id"), blank=True, null=True)
+    content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
+    state = models.ForeignKey(State, verbose_name=_("State"))
+    update_date = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return u"%s %s - %s" % (self.content_type.name, self.content_id, self.state.name)
 
 
 class WorkflowObjectRelation(models.Model):

@@ -2,19 +2,16 @@
 from django.contrib.contenttypes.models import ContentType
 
 # workflows imports
-from workflows.models import StateInheritanceBlock, State
-from workflows.models import StateObjectRelation
-from workflows.models import StatePermissionRelation
-from workflows.models import Transition
-from workflows.models import Workflow
-from workflows.models import WorkflowModelRelation
-from workflows.models import WorkflowObjectRelation
-from workflows.models import WorkflowPermissionRelation
+from workflows.conf import settings
+from workflows.models import (StateInheritanceBlock, State, StateObjectHistory, StateObjectRelation,
+                               StatePermissionRelation, Transition, Workflow, WorkflowModelRelation,
+                               WorkflowObjectRelation, WorkflowPermissionRelation)
+from workflows.signals import before_transition, after_transition, before_state_change, after_state_change
 
 # permissions imports
 import permissions.utils
 from permissions.models import Role
-from workflows.signals import before_transition, after_transition, before_state_change, after_state_change
+
 
 
 def get_objects_for_workflow(workflow):
@@ -284,6 +281,11 @@ def set_state(obj, state):
         before_state_change.send(sender=obj, from_state=initial_state, to_state=state)
         sor.state = state
         sor.save()
+        if settings.WORKFLOWS_ENABLE_STATE_HISTORY:
+            soh = StateObjectHistory(content_type=ctype, content_id=obj.id, state=state)
+            soh.save()
+        initial_state = sor.state
+
         after_state_change.send(sender=obj, from_state=initial_state, to_state=state)
     except StateObjectRelation.DoesNotExist:
         before_state_change.send(sender=obj, from_state=None, to_state=state)

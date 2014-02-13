@@ -1,6 +1,7 @@
 # workflows imports
 import workflows.utils
 
+
 class WorkflowBase(object):
     """Mixin class to make objects workflow aware.
     """
