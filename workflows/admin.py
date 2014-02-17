@@ -38,7 +38,14 @@ admin.site.register(State, StateAdmin)
 
 
 admin.site.register(StateInheritanceBlock)
-admin.site.register(StateObjectRelation)
+
+
+class StateObjectRelationAdmin(admin.ModelAdmin):
+    list_display = ('content_type', 'content_id', 'state', 'update_date')
+    list_filter = ('state','content_type')
+    search_fields = ('content_id',)
+
+admin.site.register(StateObjectRelation, StateObjectRelationAdmin)
 
 
 class StatePermissionRelationAdmin(admin.ModelAdmin):
