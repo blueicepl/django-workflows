@@ -11,6 +11,7 @@ from workflows.models import WorkflowPermissionRelation
 
 
 class StateInline(admin.TabularInline):
+    filter_horizontal = ('transitions',)
     model = State
 
 
@@ -32,6 +33,7 @@ class StateAdmin(admin.ModelAdmin):
     list_display = ('name', 'codename', 'workflow')
     list_filter = ('workflow',)
     ordering = ('codename',)
+    filter_horizontal = ('transitions',)
     inlines = [StatePermissionRelationInline]
 
 admin.site.register(State, StateAdmin)
