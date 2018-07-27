@@ -1,7 +1,7 @@
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 
 # django imports
-from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 
@@ -9,6 +9,12 @@ from django.utils.translation import ugettext_lazy as _
 import permissions.utils
 from permissions.models import Permission
 from permissions.models import Role
+
+
+class WorkflowManager(models.Manager):
+
+    def get_by_natural_key(self, codename):
+        return self.get(codename=codename)
 
 
 class Workflow(models.Model):
@@ -39,6 +45,8 @@ class Workflow(models.Model):
     codename = models.CharField(_("Codename"), max_length=100, unique=True)
     initial_state = models.ForeignKey("State", related_name="workflow_state", blank=True, null=True)
     permissions = models.ManyToManyField(Permission, symmetrical=False, through="WorkflowPermissionRelation")
+
+    objects = WorkflowManager()
 
     def __unicode__(self):
         return self.name
@@ -137,6 +145,15 @@ class Workflow(models.Model):
                 wor.save()
                 workflows.utils.set_state(obj, self.initial_state)
 
+    def natural_key(self):
+        return self.codename,
+
+
+class StateManager(models.Manager):
+
+    def get_by_natural_key(self, codename):
+        return self.get(codename=codename)
+
 
 class State(models.Model):
     """A certain state within workflow.
@@ -156,8 +173,9 @@ class State(models.Model):
     name = models.CharField(_("Name"), max_length=100)
     codename = models.CharField(_("Codename"), max_length=100, unique=True)
     workflow = models.ForeignKey(Workflow, verbose_name=_("Workflow"), related_name="states")
-    transitions = models.ManyToManyField("Transition", verbose_name=_("Transitions"), blank=True, null=True,
-                                         related_name="states")
+    transitions = models.ManyToManyField("Transition", verbose_name=_("Transitions"), blank=True, related_name="states")
+
+    objects = StateManager()
 
     class Meta:
         ordering = ("name", )
@@ -170,7 +188,7 @@ class State(models.Model):
         """
         def _condition_met():
             if transition.condition:
-                #noinspection PyBroadException
+                # noinspection PyBroadException
                 try:
                     return bool(eval(transition.condition, {
                         'obj': obj,
@@ -197,6 +215,15 @@ class State(models.Model):
                     if permissions.utils.has_permission(obj, user, permission.codename) and _condition_met():
                         transitions.append(transition)
         return transitions
+
+    def natural_key(self):
+        return self.codename,
+
+
+class TransitionManager(models.Manager):
+
+    def get_by_natural_key(self, codename):
+        return self.get(codename=codename)
 
 
 class Transition(models.Model):
@@ -233,8 +260,13 @@ class Transition(models.Model):
     condition = models.CharField(_("Condition"), blank=True, max_length=100)
     permission = models.ForeignKey(Permission, verbose_name=_("Permission"), blank=True, null=True)
 
+    objects = TransitionManager()
+
     def __unicode__(self):
         return self.name
+
+    def natural_key(self):
+        return self.codename,
 
 
 class StateObjectRelation(models.Model):
@@ -255,7 +287,7 @@ class StateObjectRelation(models.Model):
     content_type = models.ForeignKey(ContentType, verbose_name=_("Content type"), related_name="state_object",
                                      blank=True, null=True)
     content_id = models.PositiveIntegerField(_("Content id"), blank=True, null=True)
-    content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
+    content = GenericForeignKey(ct_field="content_type", fk_field="content_id")
     state = models.ForeignKey(State, verbose_name=_("State"))
     update_date = models.DateTimeField(auto_now=True)
 
@@ -284,7 +316,7 @@ class StateObjectHistory(models.Model):
     content_type = models.ForeignKey(ContentType, verbose_name=_("Content type"), related_name="state_history",
                                      blank=True, null=True)
     content_id = models.PositiveIntegerField(_("Content id"), blank=True, null=True)
-    content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
+    content = GenericForeignKey(ct_field="content_type", fk_field="content_id")
     state = models.ForeignKey(State, verbose_name=_("State"))
     update_date = models.DateTimeField(auto_now_add=True)
 
@@ -311,7 +343,7 @@ class WorkflowObjectRelation(models.Model):
     content_type = models.ForeignKey(ContentType, verbose_name=_("Content type"), related_name="workflow_object",
                                      blank=True, null=True)
     content_id = models.PositiveIntegerField(_("Content id"), blank=True, null=True)
-    content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
+    content = GenericForeignKey(ct_field="content_type", fk_field="content_id")
     workflow = models.ForeignKey(Workflow, verbose_name=_("Workflow"), related_name="wors")
 
     class Meta:
@@ -336,11 +368,17 @@ class WorkflowModelRelation(models.Model):
         The workflow which is assigned to an object. This needs to be a
         workflow instance.
     """
-    content_type = models.ForeignKey(ContentType, verbose_name=_("Content Type"), unique=True)
     workflow = models.ForeignKey(Workflow, verbose_name=_("Workflow"), related_name="wmrs")
+    content_type = models.ForeignKey(ContentType, verbose_name=_("Content Type"), unique=True)
 
     def __unicode__(self):
         return u"%s - %s" % (self.content_type.name, self.workflow.name)
+
+    def natural_key(self):
+        return self.workflow, self.content_type
+
+    class Meta:
+        unique_together = ("workflow", "content_type")
 
 
 # Permissions relation #######################################################
@@ -368,6 +406,9 @@ class WorkflowPermissionRelation(models.Model):
     def __unicode__(self):
         return u"%s %s" % (self.workflow.name, self.permission.name)
 
+    def natural_key(self):
+        return self.workflow, self.permission
+
 
 class StateInheritanceBlock(models.Model):
     """Stores inheritance block for state and permission.
@@ -387,6 +428,12 @@ class StateInheritanceBlock(models.Model):
 
     def __unicode__(self):
         return u"%s %s" % (self.state.name, self.permission.name)
+
+
+class StatePermissionManager(models.Manager):
+
+    def get_by_natural_key(self, state, role, permission):
+        return self.get(state=state, role=role, permission=permission)
 
 
 class StatePermissionRelation(models.Model):
@@ -410,10 +457,16 @@ class StatePermissionRelation(models.Model):
     permission = models.ForeignKey(Permission, verbose_name=_("Permission"))
     role = models.ForeignKey(Role, verbose_name=_("Role"))
 
+    objects = StatePermissionManager()
+
     def __unicode__(self):
         return u"%s %s %s" % (self.state.name, self.role.name, self.permission.name)
-    
+
+    def natural_key(self):
+        return self.state, self.role, self.permission
+
     class Meta:
         verbose_name = _("State Permission Relation")
         verbose_name_plural = _("States Permissions Relations")
         unique_together = ('state', 'permission', 'role')
+
