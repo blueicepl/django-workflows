@@ -1,17 +1,15 @@
 # django imports
 from django.contrib.contenttypes.models import ContentType
 
-# workflows imports
-from workflows.conf import settings
-from workflows.models import (StateInheritanceBlock, State, StateObjectHistory, StateObjectRelation,
-                               StatePermissionRelation, Transition, Workflow, WorkflowModelRelation,
-                               WorkflowObjectRelation, WorkflowPermissionRelation)
-from workflows.signals import before_transition, after_transition, before_state_change, after_state_change
-
 # permissions imports
 import permissions.utils
 from permissions.models import Role
-
+# workflows imports
+from workflows.conf import settings
+from workflows.models import (StateInheritanceBlock, State, StateObjectHistory, StateObjectRelation,
+                              StatePermissionRelation, Transition, Workflow, WorkflowModelRelation,
+                              WorkflowObjectRelation, WorkflowPermissionRelation)
+from workflows.signals import before_transition, after_transition, before_state_change, after_state_change
 
 
 def get_objects_for_workflow(workflow):
@@ -282,14 +280,15 @@ def set_state(obj, state):
         sor.state = state
         sor.save()
         if settings.WORKFLOWS_ENABLE_STATE_HISTORY:
-            soh = StateObjectHistory(content_type=ctype, content_id=obj.id, state=state)
-            soh.save()
+            StateObjectHistory.objects.create(content_type=ctype, content_id=obj.id, state=state)
         initial_state = sor.state
 
         after_state_change.send(sender=obj, from_state=initial_state, to_state=state)
     except StateObjectRelation.DoesNotExist:
         before_state_change.send(sender=obj, from_state=None, to_state=state)
         StateObjectRelation.objects.create(content=obj, state=state)
+        if settings.WORKFLOWS_ENABLE_STATE_HISTORY:
+            StateObjectHistory.objects.create(content_type=ctype, content_id=obj.id, state=state)
         after_state_change.send(sender=obj, from_state=None, to_state=state)
 
     update_permissions(obj)
