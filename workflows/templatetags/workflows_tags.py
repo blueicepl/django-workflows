@@ -12,7 +12,7 @@ def transitions(context, obj):
     """
     """
     request = context.get("request")
-    
+
     return {
         "transitions": workflows.utils.get_allowed_transitions(obj, request.user),
         "state": workflows.utils.get_state(obj),
