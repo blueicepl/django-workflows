@@ -281,8 +281,6 @@ def set_state(obj, state):
         sor.save()
         if settings.WORKFLOWS_ENABLE_STATE_HISTORY:
             StateObjectHistory.objects.create(content_type=ctype, content_id=obj.id, state=state)
-        initial_state = sor.state
-
         after_state_change.send(sender=obj, from_state=initial_state, to_state=state)
     except StateObjectRelation.DoesNotExist:
         before_state_change.send(sender=obj, from_state=None, to_state=state)

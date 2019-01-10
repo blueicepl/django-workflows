@@ -203,7 +203,8 @@ class State(models.Model):
         for transition in self.transitions.all():
             permission = transition.permission
             if permission is None:
-                transitions.append(transition)
+                if _condition_met():
+                    transitions.append(transition)
             else:
                 # First we try to get the objects specific has_permission
                 # method (in case the object inherits from the PermissionBase
@@ -257,13 +258,13 @@ class Transition(models.Model):
     workflow = models.ForeignKey(Workflow, verbose_name=_("Workflow"), related_name="transitions")
     destination = models.ForeignKey(State, verbose_name=_("Destination"), null=True, blank=True,
                                     related_name="destination_state")
-    condition = models.CharField(_("Condition"), blank=True, max_length=100)
+    condition = models.TextField(_("Condition"), blank=True)
     permission = models.ForeignKey(Permission, verbose_name=_("Permission"), blank=True, null=True)
 
     objects = TransitionManager()
 
     def __unicode__(self):
-        return self.name
+        return u"%s (%s)" % (self.name, self.workflow.name)
 
     def natural_key(self):
         return self.codename,

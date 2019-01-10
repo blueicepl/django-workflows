@@ -21,6 +21,7 @@ class WorkflowAdmin(admin.ModelAdmin):
         StateInline,
     ]
 
+
 admin.site.register(Workflow, WorkflowAdmin)
 
 
@@ -36,6 +37,7 @@ class StateAdmin(admin.ModelAdmin):
     filter_horizontal = ('transitions',)
     inlines = [StatePermissionRelationInline]
 
+
 admin.site.register(State, StateAdmin)
 
 
@@ -47,6 +49,7 @@ class StateObjectRelationAdmin(admin.ModelAdmin):
     list_filter = ('state','content_type')
     search_fields = ('content_id',)
 
+
 admin.site.register(StateObjectRelation, StateObjectRelationAdmin)
 
 
@@ -54,6 +57,7 @@ class StatePermissionRelationAdmin(admin.ModelAdmin):
     list_display = ('state', 'permission', 'role')
     list_filter = ('state', 'permission', 'role')
     ordering = ('state', 'permission', 'role')
+
 
 admin.site.register(StatePermissionRelation, StatePermissionRelationAdmin)
 
