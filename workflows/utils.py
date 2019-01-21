@@ -348,18 +348,20 @@ def update_permissions(obj):
     state = get_state(obj)
 
     # Remove all permissions for the workflow
-    for role in Role.objects.all():
-        for wpr in WorkflowPermissionRelation.objects.filter(workflow=workflow):
-            permissions.utils.remove_permission(obj, role, wpr.permission)
+    # for role in Role.objects.all():
+    #     for wpr in WorkflowPermissionRelation.objects.filter(workflow=workflow):
+    #         permissions.utils.remove_permission(obj, role, wpr.permission)
+    perms = [wpr.permission for wpr in WorkflowPermissionRelation.objects.filter(workflow=workflow)]
+    permissions.utils.remove_permission(obj, Role.objects.all(), perms)
 
     # Grant permission for the state
     for spr in StatePermissionRelation.objects.filter(state=state):
         permissions.utils.grant_permission(obj, spr.role, spr.permission)
 
     # Remove all inheritance blocks from the object
-    for wpr in WorkflowPermissionRelation.objects.filter(workflow=workflow):
-        permissions.utils.remove_inheritance_block(obj, wpr.permission)
+    # for wpr in WorkflowPermissionRelation.objects.filter(workflow=workflow):
+    #     permissions.utils.remove_inheritance_block(obj, wpr.permission)
 
     # Add inheritance blocks of this state to the object
-    for sib in StateInheritanceBlock.objects.filter(state=state):
-        permissions.utils.add_inheritance_block(obj, sib.permission)
+    # for sib in StateInheritanceBlock.objects.filter(state=state):
+    #     permissions.utils.add_inheritance_block(obj, sib.permission)
