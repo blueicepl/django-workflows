@@ -333,7 +333,8 @@ def do_transition(obj, transition, user):
     if transition in transitions:
         initial_state = get_state(obj)
         before_transition.send(sender=obj, from_state=initial_state, transition=transition, user=user)
-        set_state(obj, transition.destination)
+        if transition.destination is not None and transition.destination != initial_state:
+            set_state(obj, transition.destination)
         after_transition.send(sender=obj, from_state=initial_state, transition=transition, user=user)
         return True
     else:
