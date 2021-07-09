@@ -370,7 +370,7 @@ class WorkflowModelRelation(models.Model):
         workflow instance.
     """
     workflow = models.ForeignKey(Workflow, verbose_name=_("Workflow"), related_name="wmrs")
-    content_type = models.ForeignKey(ContentType, verbose_name=_("Content Type"), unique=True)
+    content_type = models.OneToOneField(ContentType, verbose_name=_("Content Type"))
 
     def __unicode__(self):
         return u"%s - %s" % (self.content_type.name, self.workflow.name)
